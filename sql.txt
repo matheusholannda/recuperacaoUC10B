@@ -1,0 +1,105 @@
+-- Definição (DDL)
+
+--Criação do banco
+CREATE DATABASE RPGDB;
+
+-- Criação de tabelas
+CREATE TABLE Usuarios(
+Id_Usuario INT PRIMARY KEY IDENTITY,
+Email VARCHAR(100) UNIQUE NOT NULL,
+Senha VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Classes(
+Id_Classe INT PRIMARY KEY IDENTITY,
+Nome VARCHAR(30) NOT NULL,
+Descricao VARCHAR(100)
+);
+
+CREATE TABLE Habilidades(
+Id_Habilidade INT PRIMARY KEY IDENTITY,
+Nome VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Personagens(
+Id_Personagem INT PRIMARY KEY IDENTITY,
+Nome VARCHAR(30) NOT NULL,
+Id_Usuario INT UNIQUE FOREIGN KEY REFERENCES Usuarios(Id_Usuario),
+Id_Classe INT UNIQUE FOREIGN KEY REFERENCES Classes(Id_Classe)
+);
+
+CREATE TABLE ClassesHabilidades(
+Id_Classe INT FOREIGN KEY REFERENCES Classes(Id_Classe),
+Id_Habilidade INT FOREIGN KEY REFERENCES Habilidades(Id_Habilidade)
+);
+
+
+--------------------------------------------------------------------------------
+
+
+-- Manipulação (DML)
+
+INSERT INTO Classes VALUES 
+('Mago', 'Lançar Feitiços'),
+('Bárbaro','Ataque forte'),
+('Monge','Curandeiro');
+
+INSERT INTO Habilidades VALUES
+('Espada Mortífera'),
+('Recuperar vida'),
+('Bola de Fogo'),
+('Escudo Supremo'),
+('Corrida Lenta');
+
+INSERT INTO ClassesHabilidades VALUES 
+-- Mago
+(1,3),(1,5),
+-- Bárbaro
+(2,1),(2,4),
+(3,5);
+
+INSERT INTO Usuarios VALUES
+-- Aphonso
+('usuario1@email.com','1234'),
+-- Danox
+('usuario2@email.com','4321');
+
+INSERT INTO Personagens VALUES 
+('DeuBug', 1, 1),
+('BitBug', 2, 2);
+
+INSERT INTO Usuarios VALUES ('vaiserdeletado@email.com','1234');
+
+SELECT * FROM Usuarios
+
+DELETE FROM Usuarios WHERE Id_Usuario = 3;
+
+UPDATE Usuarios SET Email = 'aphonsoemail@email.com' WHERE Id_Usuario = 1;
+
+UPDATE Usuarios SET Senha = '6789' WHERE Id_Usuario = 2;
+
+
+--------------------------------------------------------------------------------
+
+-- Consultas (DQL)
+
+SELECT * FROM Usuarios;
+SELECT * FROM Classes;
+SELECT * FROM Personagens;
+SELECT * FROM Habilidades;
+SELECT * FROM ClassesHabilidades;
+
+SELECT Nome FROM Classes;
+SELECT Nome, Descricao FROM Classes;
+SELECT Nome, Descricao FROM Classes WHERE Id_Classe = 2;
+
+SELECT Personagens.Nome, Classes.Nome FROM Personagens
+INNER JOIN Classes
+ON Personagens.Id_Classe = Classes.Id_Classe;
+
+-- Controle de acesso
+
+CREATE LOGIN aphonso WITH PASSWORD = '1234';
+CREATE USER aphonso FOR LOGIN aphonso;
+
+GRANT SELECT TO aphonso
